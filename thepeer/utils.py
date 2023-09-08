@@ -28,3 +28,4 @@ class ChargeEvent(str, Enum):
 
 class Currency(str, Enum):
     NGN = "NGN"
+    USD = "USD"
