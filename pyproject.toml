@@ -1,13 +1,18 @@
 [tool.poetry]
 name = "thepeer"
 version = "0.1.0"
-description = ""
+description = "A 3rd party developer friendly client package for thepeer"
 authors = ["Gbenga Adeyi <adeyigbenga005@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.9"
+httpx = "^0.24.1"
 
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.7.0"
+ruff = "^0.0.287"
 
 [build-system]
 requires = ["poetry-core"]
