@@ -1,6 +1,6 @@
 from unittest import TestCase, IsolatedAsyncioTestCase
 
-from thepeer.base import BaseClient
+from thepeer._base import BaseClient
 
 
 class BaseClientTestCase(TestCase):
