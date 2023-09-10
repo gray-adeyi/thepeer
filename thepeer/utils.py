@@ -29,3 +29,9 @@ class ChargeEvent(str, Enum):
 class Currency(str, Enum):
     NGN = "NGN"
     USD = "USD"
+
+
+class PaymentChannel(str, Enum):
+    SEND = "send"
+    CHECKOUT = "checkout"
+    DIRECT_CHARGE = "direct_charge"
