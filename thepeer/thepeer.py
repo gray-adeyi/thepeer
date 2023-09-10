@@ -1,20 +1,20 @@
 from typing import Optional
 
-from thepeer.base import BaseClient, BaseAsyncClient
+from thepeer._base import BaseClient, BaseAsyncClient
 from thepeer.clients.links import LinkClient, AsyncLinkClient
 from thepeer.clients.transactions import TransactionClient, AsyncTransactionClient
 from thepeer.clients.users import UserClient, AsyncUserClient
-from thepeer.utils import ChargeEvent, HTTPMethod, Response, Currency
+from thepeer.utils import ChargeEvent, HTTPMethod, Response, Currency, PaymentChannel
 
 
 class ThePeerClient(BaseClient):
     """ThePeerClient provides methods and attributes that serves as a
     convenience for interacting with thepeer"""
 
-    def __init__(self, secret_key: str):
+    def __init__(self, secret_key: Optional[str] = None):
         """
         Args:
-             secret_key: your thepeer secret_key. if not provide.
+             secret_key: your thepeer secret_key. if not provided,
                 the client tries to access your thepeer secret key
                 from your environmental variables via.
                 THEPEER_SECRET_KEY=<secret_key>. if the secret
@@ -26,7 +26,7 @@ class ThePeerClient(BaseClient):
         self.transactions = TransactionClient(self.secret_key)
         self.links = LinkClient(self.secret_key)
 
-    def charge(self, charge_reference: str, event: ChargeEvent) -> Response:
+    def authorize_charge(self, charge_reference: str, event: ChargeEvent) -> Response:
         """Process a charge authorization request.
 
         Arg:
@@ -44,7 +44,7 @@ class ThePeerClient(BaseClient):
             data={"event": event},
         )
 
-    def checkout(
+    def generate_checkout(
         self,
         amount: int,
         email: str,
@@ -69,6 +69,10 @@ class ThePeerClient(BaseClient):
             Response: A dataclass containing the HTTP status code and
                 data returned by thepeer servers
         """
+        if amount < 10_000 and currency == Currency.NGN:
+            raise ValueError("The minimum allowed amount is 10000 (kobo)")
+        if amount > 100_000_000 and currency == Currency.NGN:
+            raise ValueError("The minimum allowed amount is 100000000 (kobo)")
         data = {
             "currency": currency,
             "amount": amount,
@@ -80,15 +84,33 @@ class ThePeerClient(BaseClient):
             endpoint_path="/checkout", method=HTTPMethod.POST, data=data
         )
 
+    def get_businesses(self, channel: PaymentChannel):
+        """
+        Fetch businesses based on the API they integrated.
+
+        Args:
+             channel: The specific API to return businesses of.
+                Supported values are `PaymentChannel.SEND`,
+                `PaymentChannel.CHECKOUT`, and
+                `PaymentChannel.DIRECT_CHARGE`.
+
+        Returns:
+            Response: A dataclass containing the HTTP status code and
+                data returned by thepeer servers
+        """
+        return self.api_call(
+            endpoint_path=f"/businesses?channel={channel}", method=HTTPMethod.GET
+        )
+
 
 class AsyncThePeerClient(BaseAsyncClient):
     """AsyncThePeerClient is an async equivalent of ThePeerClient that provides
     methods and attributes that serves as a convenience for interacting with thepeer."""
 
-    def __init__(self, secret_key: str):
+    def __init__(self, secret_key: Optional[str] = None):
         """
         Args:
-             secret_key: your thepeer secret_key. if not provide.
+             secret_key: your thepeer secret_key. if not provided,
                 the client tries to access your thepeer secret key
                 from your environmental variables via.
                 THEPEER_SECRET_KEY=<secret_key>. if the secret
@@ -100,7 +122,7 @@ class AsyncThePeerClient(BaseAsyncClient):
         self.transactions = AsyncTransactionClient(self.secret_key)
         self.links = AsyncLinkClient(self.secret_key)
 
-    async def charge(self, reference: str, event: ChargeEvent) -> Response:
+    async def authorize_charge(self, reference: str, event: ChargeEvent) -> Response:
         """Process a charge authorization request.
 
         Arg:
@@ -118,7 +140,7 @@ class AsyncThePeerClient(BaseAsyncClient):
             data={"event": event},
         )
 
-    async def checkout(
+    async def generate_checkout(
         self,
         amount: int,
         email: str,
@@ -152,4 +174,22 @@ class AsyncThePeerClient(BaseAsyncClient):
         }
         return await self.api_call(
             endpoint_path="/checkout", method=HTTPMethod.POST, data=data
+        )
+
+    async def get_businesses(self, channel: PaymentChannel):
+        """
+        Fetch businesses based on the API they integrated.
+
+        Args:
+             channel: The specific API to return businesses of.
+                Supported values are `PaymentChannel.SEND`,
+                `PaymentChannel.CHECKOUT`, and
+                `PaymentChannel.DIRECT_CHARGE`.
+
+        Returns:
+            Response: A dataclass containing the HTTP status code and
+                data returned by thepeer servers
+        """
+        return await self.api_call(
+            endpoint_path=f"/businesses?channel={channel}", method=HTTPMethod.GET
         )

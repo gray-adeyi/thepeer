@@ -22,7 +22,7 @@ class AbstractClient(ABC):
         if not self.secret_key:
             raise ValueError(
                 (
-                    "secret_key not provide on instantiation or set"
+                    "secret_key not provided on client instantiation or set"
                     f" in the environmental variables as {self.ENV_SECRET_KEY_NAME}"
                 )
             )
@@ -92,17 +92,14 @@ class BaseClient(AbstractClient):
 class BaseAsyncClient(AbstractClient):
     def __init__(self, secret_key: str):
         super().__init__(secret_key)
+        self._client = httpx.AsyncClient()
 
     async def api_call(
         self, endpoint_path: str, method: HTTPMethod, data: Optional[dict] = None
     ) -> Response:
-        http_method_callable = await self._get_http_method_callable(method)
+        http_method_callable = getattr(self._client, method)
         http_method_callable_kwargs = self._parse_http_method_callable_kwargs(
             endpoint_path, method, data
         )
         response = await http_method_callable(**http_method_callable_kwargs)
         return self._parse_response(response)
-
-    async def _get_http_method_callable(self, method: HTTPMethod) -> Callable:
-        async with httpx.AsyncClient() as client:
-            return getattr(client, method)

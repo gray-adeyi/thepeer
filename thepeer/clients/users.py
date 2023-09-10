@@ -1,6 +1,6 @@
 from typing import Optional
 
-from thepeer.base import BaseClient, BaseAsyncClient
+from thepeer._base import BaseClient, BaseAsyncClient
 from thepeer.utils import HTTPMethod, Response
 
 
@@ -8,7 +8,7 @@ class UserClient(BaseClient):
     def __init__(self, secret_key: Optional[str] = None):
         """
         Args:
-             secret_key: your thepeer secret_key. if not provide.
+             secret_key: your thepeer secret_key. if not provided,
                 the client tries to access your thepeer secret key
                 from your environmental variables via.
                 THEPEER_SECRET_KEY=<secret_key>. if the secret
@@ -95,7 +95,7 @@ class AsyncUserClient(BaseAsyncClient):
     def __init__(self, secret_key: Optional[str] = None):
         """
         Args:
-             secret_key: your thepeer secret_key. if not provide.
+             secret_key: your thepeer secret_key. if not provided,
                 the client tries to access your thepeer secret key
                 from your environmental variables via.
                 THEPEER_SECRET_KEY=<secret_key>. if the secret
