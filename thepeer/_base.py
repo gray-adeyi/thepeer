@@ -64,7 +64,7 @@ class AbstractClient(ABC):
 
 
 class BaseClient(AbstractClient):
-    def __init__(self, secret_key: str):
+    def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
     def api_call(
@@ -90,7 +90,7 @@ class BaseClient(AbstractClient):
 
 
 class BaseAsyncClient(AbstractClient):
-    def __init__(self, secret_key: str):
+    def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
         self._client = httpx.AsyncClient()
 
