@@ -3,7 +3,15 @@ name = "thepeer"
 version = "0.1.0"
 description = "A 3rd party developer friendly client package for thepeer"
 authors = ["Gbenga Adeyi <adeyigbenga005@gmail.com>"]
-readme = "README.md"
+maintainers = ["Gbenga Adeyi <adeyigbenga005@gmail.com>"]
+readme = "PACKAGE_README.md"
+license = "MIT"
+repository = "https://github.com/gray-adeyi/thepeer"
+keywords = ["thepeer", "api wrapper"]
+classifiers = [
+"Intended Audience :: Developers"
+]
+packages = [{include = "thepeer"}]
 
 [tool.poetry.dependencies]
 python = "^3.9"
