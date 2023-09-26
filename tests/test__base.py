@@ -1,6 +1,6 @@
 from unittest import TestCase, IsolatedAsyncioTestCase
 
-from thepeer._base import BaseClient
+from thepeer._base import BaseClient, __version__
 
 
 class BaseClientTestCase(TestCase):
@@ -15,7 +15,11 @@ class BaseClientTestCase(TestCase):
         )
 
     def test_headers(self):
-        expected_headers = {"x-api-key": self.secret_key, "Accept": "Application/json"}
+        expected_headers = {
+            "x-api-key": self.secret_key,
+            "Accept": "Application/json",
+            "User-Agent": f"thepeer {__version__}",
+        }
         self.assertDictEqual(
             self.client.headers, expected_headers, "expected headers not provided"
         )
@@ -36,7 +40,11 @@ class BaseAsyncClient(IsolatedAsyncioTestCase):
         )
 
     def test_headers(self):
-        expected_headers = {"x-api-key": self.secret_key, "Accept": "Application/json"}
+        expected_headers = {
+            "x-api-key": self.secret_key,
+            "Accept": "Application/json",
+            "User-Agent": f"thepeer {__version__}",
+        }
         self.assertDictEqual(
             self.client.headers, expected_headers, "expected headers not provided"
         )

@@ -1,7 +1,14 @@
 from unittest import TestCase, IsolatedAsyncioTestCase
 
 from thepeer import ThePeerClient, AsyncThePeerClient, PaymentChannel
-from thepeer.clients import UserClient, TransactionClient, LinkClient
+from thepeer.clients import (
+    UserClient,
+    TransactionClient,
+    LinkClient,
+    AsyncUserClient,
+    AsyncLinkClient,
+    AsyncTransactionClient,
+)
 from dotenv import load_dotenv
 from httpx import codes
 
@@ -44,13 +51,15 @@ class AsyncThePeerClientTestCase(IsolatedAsyncioTestCase):
         cls.client = AsyncThePeerClient()
 
     def test_has_attr_users(self):
-        self.assertIsInstance(getattr(self.client, "users"), UserClient)
+        self.assertIsInstance(getattr(self.client, "users"), AsyncUserClient)
 
     def test_has_attr_transactions(self):
-        self.assertIsInstance(getattr(self.client, "transactions"), TransactionClient)
+        self.assertIsInstance(
+            getattr(self.client, "transactions"), AsyncTransactionClient
+        )
 
     def test_has_attr_links(self):
-        self.assertIsInstance(getattr(self.client, "links"), LinkClient)
+        self.assertIsInstance(getattr(self.client, "links"), AsyncLinkClient)
 
     async def test_can_authorize_charge(self):
         ...
